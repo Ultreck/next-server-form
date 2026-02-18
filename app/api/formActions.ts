@@ -1,34 +1,27 @@
+// app/contact/actions.ts
 "use server";
 
+import { redirect } from "next/navigation";
+
 export async function submitContactForm(formData: FormData) {
-  //Extract form data
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const message = formData.get("message") as string;
 
-  //Validation
+  // Validation
   if (!name || !email || !message) {
-    return {
-      success: false,
-      error: "All fields are required",
-    };
+    // Can't return error state without client component
+    // Redirect to error page instead
+    redirect("/contact?error=missing-fields");
   }
 
   if (!email.includes("@")) {
-    return {
-      success: false,
-      error: "Please enter a valid email",
-    };
+    redirect("/contact?error=invalid-email");
   }
 
-  //Simulate database save
-  //await db.contact.create({...})
+  // Save to database
+  console.log("Form submitted:", { name, email, message });
   
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log("Form submitted: ", { name, email, message });
-
-  return {
-    success: true,
-    message: "Thank you! We'll be in touch soon",
-  };
+  // Redirect to success page
+  redirect("/contact/success");
 }
